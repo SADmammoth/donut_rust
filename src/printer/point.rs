@@ -19,4 +19,12 @@ impl Point {
 
     Point{x, y, intensity}
   }
+
+  pub fn is_higher_from(self: &Self, point: &Point) -> bool {
+    self.y > point.y
+  }
+
+  pub fn is_to_right_from(self: &Self, point: &Point) -> bool {
+    self.x > point.x
+  }
 }
