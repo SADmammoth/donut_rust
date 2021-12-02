@@ -1,9 +1,10 @@
 use super::figures::*;
 use super::point::*;
 use super::print2d::*;
+use super::Canvas;
 
 pub struct Printer {
-    mat: Vec<Vec<u8>>,
+    mat: Canvas,
     intensity_map: Vec<char>,
     width: usize,
     height: usize,
@@ -59,5 +60,9 @@ impl Printer {
         let canvas_points = convert_figure_to_canvas_points(figure, self.width, self.height);
       
         self.print(canvas_points);
+    }
+
+    pub fn get_current_mat(self: &Self) -> Canvas {
+      self.mat.clone()
     }
 }

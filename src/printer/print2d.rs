@@ -1,5 +1,6 @@
 use super::figures::Figure;
 use super::Point;
+use super::Canvas;
 
 #[derive(Debug)]
 pub struct CanvasPoint {
@@ -70,9 +71,9 @@ fn mul_usize_f32_ceil(a: &usize, b: &f32) -> usize {
 
 
 pub fn get_print_matrix(
-    mut prev_matrix: Vec<Vec<u8>>,
+    mut prev_matrix: Canvas,
     canvas_points: &Vec<CanvasPoint>,
-) -> Vec<Vec<u8>> {
+) -> Canvas {
     canvas_points.iter().for_each(|point| {
       let mut y = point.y;
       if y >= prev_matrix.len() {
