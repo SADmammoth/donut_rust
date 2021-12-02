@@ -18,10 +18,10 @@ pub fn rect(left_top: Point, right_bottom: Point, intensity: u8) -> Figure {
         width,
         height,
         origin,
-        point_mapper: Box::new(move |point| Point {
+        point_mapper: Box::new(move |point| Some(Point {
             x: x_mapper(point.x),
             y: y_mapper(point.y),
             intensity,
-        }),
+        })),
     }
 }

@@ -43,11 +43,13 @@ pub fn convert_figure_to_canvas_points(
 
     for y in 0..steps_y {
         for x in 0..steps_x {
-            points.push((*figure.point_mapper)(Point {
+          if let Some(point) = (*figure.point_mapper)(Point {
                 x: x as f32 * step_x,
                 y: y as f32 * step_y,
                 intensity: 0,
-            }))
+            }){
+              points.push(point);
+            }
         }
     }
 

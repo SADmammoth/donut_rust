@@ -3,7 +3,7 @@ use std::ops::Fn;
 pub use rect::*;
 use super::point::Point;
 
-pub type PointMapper = dyn Fn(Point) -> Point;
+pub type PointMapper = dyn Fn(Point) -> Option<Point>;
 
 pub struct Figure {
   pub width: f32,
