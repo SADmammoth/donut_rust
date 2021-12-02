@@ -3,9 +3,9 @@ use super::Point;
 
 #[derive(Debug)]
 pub struct CanvasPoint {
-    x: usize,
-    y: usize,
-    intensity: u8,
+    pub x: usize,
+    pub y: usize,
+    pub intensity: u8,
 }
 
 pub fn format_matrix(mat: Vec<Vec<char>>) -> String {
@@ -30,14 +30,14 @@ pub fn convert_to_canvas_points(
 }
 
 pub fn convert_figure_to_canvas_points(
-    figure: Figure,
+    figure: &Figure,
     canvas_width: usize,
     canvas_height: usize,
 ) -> Vec<CanvasPoint> {
-    let steps_x = mul_usize_f32(&canvas_width, &figure.width);
-    let step_x = 1f32 / mul_usize_f32(&canvas_width, &figure.width) as f32;
-    let steps_y = mul_usize_f32(&canvas_height, &figure.height);
-    let step_y = 1f32 / mul_usize_f32(&canvas_height, &figure.height) as f32;
+    let steps_x = mul_usize_f32_ceil(&canvas_width, &figure.width);
+    let step_x = 1f32 / steps_x as f32;
+    let steps_y = mul_usize_f32_floor(&canvas_height, &figure.height);
+    let step_y = 1f32 / steps_y as f32;
 
     let mut points = vec![];
 
@@ -58,17 +58,35 @@ fn mul_usize_f32(a: &usize, b: &f32) -> usize {
     ((*a as f32) * b).round() as usize
 }
 
+fn mul_usize_f32_floor(a: &usize, b: &f32) -> usize {
+    ((*a as f32) * b).floor() as usize
+}
+
+fn mul_usize_f32_ceil(a: &usize, b: &f32) -> usize {
+    ((*a as f32) * b).ceil() as usize
+}
+
+
 pub fn get_print_matrix(
     mut prev_matrix: Vec<Vec<u8>>,
     canvas_points: &Vec<CanvasPoint>,
 ) -> Vec<Vec<u8>> {
     canvas_points.iter().for_each(|point| {
-        if prev_matrix[point.y][point.x] != 0 {
-            prev_matrix[point.y][point.x] =
-                ((prev_matrix[point.y][point.x] + point.intensity) as f32 / 2 as f32).round() as u8;
+      let mut y = point.y;
+      if y >= prev_matrix.len() {
+        y = prev_matrix.len() - 1;
+      }
+      let mut x = point.x;
+      if x >= prev_matrix[y].len() {
+        x = prev_matrix[y].len() - 1;
+      }
+        if prev_matrix[y][x] != 0 {
+          let current_value = prev_matrix[y][x];
+            prev_matrix[y][x] =
+                (( current_value + point.intensity) as f32 / 2.0).round() as u8;
             return;
         }
-        prev_matrix[point.y][point.x] = point.intensity;
+        prev_matrix[y][x] = point.intensity;
     });
 
     prev_matrix

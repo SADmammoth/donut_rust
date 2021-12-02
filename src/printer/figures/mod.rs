@@ -8,5 +8,6 @@ pub type PointMapper = dyn Fn(Point) -> Point;
 pub struct Figure {
   pub width: f32,
   pub height: f32,
+  pub origin: Point,
   pub point_mapper: Box<PointMapper>,
 }

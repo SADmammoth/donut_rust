@@ -3,7 +3,7 @@ use super::point::*;
 use super::print2d::*;
 
 pub struct Printer {
-    mat: Option<Vec<Vec<u8>>>,
+    mat: Vec<Vec<u8>>,
     intensity_map: Vec<char>,
     width: usize,
     height: usize,
@@ -13,20 +13,21 @@ impl Printer {
     pub fn new() -> Printer {
         let (term_w, _) = term_size::dimensions_stdout().unwrap();
         let (canvas_w, canvas_y) = (term_w, (term_w as f32 * 0.4).round() as usize);
+
         Printer {
-            mat: None,
-            intensity_map: vec![' ', '.', '*', '+', '=', '#'],
+            mat: vec![vec![0; canvas_w]; canvas_y],
+            intensity_map: vec![' ', '.', '+', '*', '#', '@'],
             width: canvas_w,
             height: canvas_y,
         }
     }
 
-    fn points_to_string(self: &mut Self, points: Vec<CanvasPoint>) -> String {
-        if let None = self.mat {
-            self.mat = Some(vec![vec![0; self.width]; self.height]);
-        }
+    pub fn wipe(self: &mut Self) {
+      self.mat = vec![vec![0; self.width]; self.height];
+    }
 
-        let new_mat = get_print_matrix(self.mat.clone().unwrap(), &points);
+    fn points_to_string(self: &mut Self, points: Vec<CanvasPoint>) -> String {
+        let new_mat = get_print_matrix(self.mat.clone(), &points);
 
         let print_mat = format_matrix(
             new_mat
@@ -39,13 +40,13 @@ impl Printer {
                 .collect::<Vec<Vec<char>>>(),
         );
 
-        self.mat = Some(new_mat);
+        self.mat = new_mat;
 
         print_mat
     }
 
     fn print(self: &mut Self, points: Vec<CanvasPoint>) {
-      print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         println!("{:}", self.points_to_string(points));
     }
 
@@ -54,8 +55,9 @@ impl Printer {
         self.print(canvas_points);
     }
 
-    pub fn print_figure(self: &mut Self, figure: Figure) {
+    pub fn print_figure(self: &mut Self, figure: &Figure) {
         let canvas_points = convert_figure_to_canvas_points(figure, self.width, self.height);
+      
         self.print(canvas_points);
     }
 }
