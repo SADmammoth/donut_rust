@@ -3,15 +3,20 @@ use printer::figures::*;
 use printer::Printer;
 use printer::*;
 use printer::transformations::*;
+use std::{thread, time};
 
 fn main() {
     let mut printer = Printer::new();
-    printer.print_figure(&rect(Point::new(0.0, 1.0, 0), Point::new(1.0, 0.0, 0), 1));
-    printer.print_figure(&rect(
-        Point::new(0.33, 0.63, 0),
-        Point::new(0.63, 0.33, 0),
-        3,
-    ));
-    let rectangle = rect(Point::new(0.2, 0.5, 0), Point::new(0.5, 0.2, 0), 5);
-    printer.print_figure(&affine_transform(rectangle, Angle{ value: 45 }));
+
+    let mut angle = 0;
+    let delay = time::Duration::from_millis(100);
+
+    loop{   
+        printer.print_figure(&rect(Point::new(0.0, 1.0, 0), Point::new(1.0, 0.0, 0), 1));
+        angle += 5;
+        let rectangle = rect(Point::new(0.33, 0.66, 0), Point::new(0.66, 0.33, 0), 3);
+        printer.print_figure(&affine_transform(rectangle, Angle{ value: angle }));
+        thread::sleep(delay);
+        printer.wipe(); 
+    }
 }
