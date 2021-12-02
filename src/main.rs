@@ -10,5 +10,5 @@ fn main() {
     let mut printer = Printer::new();
     let mut animator = Animator::new_with_printer_background(printer);
 
-    Animator::by_frame(animator);
+    animator.by_frame();
 }

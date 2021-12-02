@@ -27,11 +27,9 @@ impl Printer {
       self.mat = vec![vec![0; self.width]; self.height];
     }
 
-    fn points_to_string(self: &mut Self, points: Vec<CanvasPoint>) -> String {
-        let new_mat = get_print_matrix(self.mat.clone(), &points);
-
+    fn canvas_to_string(self: &mut Self, canvas: Canvas) -> String {
         let print_mat = format_matrix(
-            new_mat
+            canvas
                 .iter()
                 .map(|row| {
                     row.iter()
@@ -41,14 +39,14 @@ impl Printer {
                 .collect::<Vec<Vec<char>>>(),
         );
 
-        self.mat = new_mat;
+        self.mat = canvas;
 
         print_mat
     }
 
     fn print(self: &mut Self, points: Vec<CanvasPoint>) {
         print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
-        println!("{:}", self.points_to_string(points));
+        println!("{:}", self.canvas_to_string get_print_matrix(self.mat.clone(), &points)));
     }
 
     pub fn print_points(self: &mut Self, points: &Vec<Point>) {
@@ -60,6 +58,15 @@ impl Printer {
         let canvas_points = convert_figure_to_canvas_points(figure, self.width, self.height);
       
         self.print(canvas_points);
+    }
+
+    pub fn get_figure_matrix(self: &Self, figure: &Figure) -> Canvas {
+         let canvas_points = convert_figure_to_canvas_points(figure, self.width, self.height);
+         get_print_matrix(self.mat.clone(), &canvas_points)
+    }
+
+    pub fn print_matrix(self: &Self, matrix: &Canvas) -> Canvas {
+        println!("{:}", self.canvas_to_string(matrix));
     }
 
     pub fn get_current_mat(self: &Self) -> Canvas {
