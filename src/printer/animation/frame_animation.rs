@@ -2,46 +2,55 @@ use std::{sync, thread, time};
 use std::sync::atomic::{AtomicBool, Ordering};
 use super::super::*;
 use super::*;
+use super::timer::Timer;
+use std::sync::{Arc, Mutex};
+
+pub enum AnimationTime {
+  Infinite,
+  Milliseconds(u64),
+}
 
 pub struct FrameAnimation {
-    handle: Option<thread::JoinHandle<()>>,
-    alive: sync::Arc<AtomicBool>,
     frames: Vec<Frame>,
+    timer: Arc<Mutex<Timer>>,
+    current_frame_index: usize,
+    printer: Arc<Mutex<Printer>>,
 }
 
 impl FrameAnimation {
-    pub fn new(frames: Vec<Frame>) -> FrameAnimation {
+    pub fn new(frames: Vec<Frame>, printer: Arc<Mutex<Printer>>) -> FrameAnimation {
         FrameAnimation {
-            handle: None,
-            alive: sync::Arc::new(AtomicBool::new(false)),
-            frames 
+            frames,
+            timer: Arc::new(Mutex::new(Timer::new())),
+            current_frame_index: 0,
+            printer,
         }
     }
 
-    pub fn start<F>(&mut self, print: F)
-        where F: 'static + Send + FnMut(Frame) -> ()
-    {
-        self.alive.store(true, Ordering::SeqCst);
-
-        let alive = self.alive.clone();
-
-        self.handle = Some(thread::spawn(move || {
-            let delay = time::Duration::from_millis(100);
-            let mut print = print;
-            let frame = 0;
-            while alive.load(Ordering::SeqCst) {
-                print(self.frames[frame].clone());
-                frame += 1;
-                thread::sleep(delay);
-            }
-        }));
-        
-        self.handle
-            .take().expect("Called stop on non-running thread")
-            .join().expect("Could not join spawned thread");
+    fn next_frame(self: &mut Self) -> &Frame {
+      if self.current_frame_index >= self.frames.len() - 1 {
+        self.current_frame_index = 0;
+      } else {
+        self.current_frame_index += 1;
+      }
+      
+      &self.frames[self.current_frame_index]
     }
 
-    pub fn stop(&mut self) {
-        self.alive.store(false, Ordering::SeqCst);
+    pub fn start(mut self: Self, time: AnimationTime)
+    {
+        let printer = Arc::clone(&self.printer);
+        let mut timer_mutex = Arc::clone(&self.timer);
+  
+        let mut timer = timer_mutex.lock().unwrap();
+        timer.start(move ||{
+          let frame = self.next_frame();
+          printer.lock().unwrap().print_matrix(&frame.matrix);
+        });
+        
+        match time {
+          AnimationTime::Infinite => timer.infinite(),
+          AnimationTime::Milliseconds(ms) => timer.stop_after(ms),
+        };
     }
 }
