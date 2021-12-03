@@ -3,6 +3,7 @@ use super::point::*;
 use super::print2d::*;
 use super::Canvas;
 
+#[derive(Debug)]
 pub struct Printer {
     mat: Canvas,
     intensity_map: Vec<char>,

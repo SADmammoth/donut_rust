@@ -37,7 +37,7 @@ impl Animator {
     }
   }
 
-  pub fn by_frame(mut self: Self/*, frames: &Frame[]*/, animationTime: AnimationTime){
+  pub fn by_frame(mut self: Self/*, frames: &Frame[]*/, animationTime: AnimationTime) -> Animator {
     let mut printer = self.printer;
     let mut background = self.background.clone();
 
@@ -58,6 +58,12 @@ impl Animator {
 
     let mut animation: FrameAnimation = FrameAnimation::new(frames, Arc::new(Mutex::new(printer)));
 
-    animation.start(animationTime);
+    self.printer = animation.start(animationTime);
+
+    self
+  }
+
+  pub fn return_printer(self: Self) -> Printer {
+    self.printer
   }
 }
