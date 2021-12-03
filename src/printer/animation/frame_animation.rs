@@ -1,17 +1,60 @@
+use std::{sync, thread, time};
+use std::sync::atomic::{AtomicBool, Ordering};
 use super::super::*;
-use std::{thread, time};
-use super::super::transformations::*;
-use super::super::figures::*;
+use super::*;
+use super::timer::Timer;
+use std::sync::{Arc, Mutex};
 
-pub fn frame_animation(printer: &mut Printer, background: &Canvas/*, frames: &Frame[]*/) {
-    let mut angle = 0;
-    let delay = time::Duration::from_millis(100);
+pub enum AnimationTime {
+  Infinite,
+  Milliseconds(u64),
+}
 
-    loop {
-        angle += 5;
-        let rectangle = rect(Point::new(0.33, 0.66, 0), Point::new(0.66, 0.33, 0), 3);
-        printer.print_figure(&affine_transform(rectangle, Angle{ value: angle }));
-        thread::sleep(delay);
-        printer.wipe(); 
+pub struct FrameAnimation {
+    frames: Vec<Frame>,
+    timer: Arc<Mutex<Timer>>,
+    current_frame_index: usize,
+    printer: Arc<Mutex<Printer>>,
+}
+
+impl FrameAnimation {
+    pub fn new(frames: Vec<Frame>, printer: Arc<Mutex<Printer>>) -> FrameAnimation {
+        FrameAnimation {
+            frames,
+            timer: Arc::new(Mutex::new(Timer::new())),
+            current_frame_index: 0,
+            printer,
+        }
+    }
+
+    fn next_frame(self: &mut Self) -> &Frame {
+      if self.current_frame_index >= self.frames.len() - 1 {
+        self.current_frame_index = 0;
+      } else {
+        self.current_frame_index += 1;
+      }
+      
+      &self.frames[self.current_frame_index]
+    }
+
+    pub fn start(mut self: Self, time: AnimationTime) -> Printer
+    {
+        let printer = Arc::clone(&self.printer);
+        let returned_printer = Arc::clone(&self.printer);
+        let mut timer_mutex = Arc::clone(&self.timer);
+  
+        let mut timer = timer_mutex.lock().unwrap();
+        
+        timer.start(move ||{
+          let frame = self.next_frame();
+          printer.lock().unwrap().print_matrix(&frame.matrix);
+        });
+        
+        match time {
+          AnimationTime::Infinite => timer.infinite(),
+          AnimationTime::Milliseconds(ms) => timer.stop_after(ms),
+        };
+
+        Arc::try_unwrap(returned_printer).unwrap().into_inner().unwrap()
     }
 }

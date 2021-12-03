@@ -1,9 +1,20 @@
+mod timer;
 mod frame_animation;
-use super::Canvas;
-use super::Printer;
 
+use std::{thread, time};
+use thread::*;
+use frame_animation::FrameAnimation;
+use super::super::*;
+use super::super::print2d::*;
+use super::super::transformations::*;
+use super::super::figures::*;
+use super::*;
+use std::sync::{Arc, Mutex};
+pub use frame_animation::AnimationTime;
+
+#[derive(Clone)]
 pub struct Frame {
-  matrix: Canvas,
+  pub matrix: Canvas,
 }
 
 pub struct Animator {
@@ -15,22 +26,44 @@ impl Animator {
   pub fn new_with_printer_background(printer: Printer) -> Animator {
     Animator {
       background: printer.get_current_mat(),
-      printer
+      printer,
     }
   }
 
   pub fn new(background: Canvas, printer: Printer) -> Animator {
     Animator {
       background,
-      printer
+      printer,
     }
   }
 
-  pub fn by_frame(mut self: Self/*, frames: &Frame[]*/){
-    frame_animation::frame_animation(&mut self.printer, &self.background/*, frames*/);
+  pub fn by_frame(mut self: Self/*, frames: &Frame[]*/, animationTime: AnimationTime) -> Animator {
+    let mut printer = self.printer;
+    let mut background = self.background.clone();
+
+    let mut angle = 0;
+
+    let mut frames: Vec<Frame> = vec![];
+
+    while angle <= 360 {
+        let rectangle = rect(Point::new(0.33, 0.66, 0), Point::new(0.66, 0.33, 0), 3);
+        frames.push(
+          Frame {
+            matrix: printer.get_figure_matrix(
+                &affine_transform(rectangle, Angle{ value: angle }  )
+              )
+          });
+        angle += 5;
+    }
+
+    let mut animation: FrameAnimation = FrameAnimation::new(frames, Arc::new(Mutex::new(printer)));
+
+    self.printer = animation.start(animationTime);
+
+    self
   }
 
-  pub fn takeout_printer(self: Self) -> Printer {
+  pub fn return_printer(self: Self) -> Printer {
     self.printer
   }
 }
