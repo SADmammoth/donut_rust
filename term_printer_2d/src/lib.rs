@@ -1,8 +1,9 @@
+mod point;
+mod term_print;
+
 pub mod animation;
 pub mod figures;
-mod point;
 pub mod print2d;
-mod term_print;
 pub mod transformations;
 
 pub use point::*;

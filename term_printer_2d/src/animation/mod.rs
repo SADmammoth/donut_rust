@@ -1,16 +1,11 @@
 mod frame_animation;
 mod timer;
 
-use super::*;
-use crate::figures::*;
-use crate::print2d::*;
-use crate::transformations::*;
-use crate::*;
-pub use frame_animation::AnimationTime;
+use crate::{figures::*, transformations::*, Canvas, Point, Printer};
 use frame_animation::FrameAnimation;
 use std::sync::{Arc, Mutex};
-use std::{thread, time};
-use thread::*;
+
+pub use frame_animation::AnimationTime;
 
 #[derive(Clone)]
 pub struct Frame {
@@ -39,10 +34,10 @@ impl Animator {
 
     pub fn by_frame(
         mut self: Self, /*, frames: &Frame[]*/
-        animationTime: AnimationTime,
+        animation_time: AnimationTime,
     ) -> Animator {
-        let mut printer = self.printer;
-        let mut background = self.background.clone();
+        let printer = self.printer;
+        let _background = self.background.clone();
 
         let mut angle = 0;
 
@@ -57,10 +52,9 @@ impl Animator {
             angle += 5;
         }
 
-        let mut animation: FrameAnimation =
-            FrameAnimation::new(frames, Arc::new(Mutex::new(printer)));
+        let animation: FrameAnimation = FrameAnimation::new(frames, Arc::new(Mutex::new(printer)));
 
-        self.printer = animation.start(animationTime);
+        self.printer = animation.start(animation_time);
 
         self
     }

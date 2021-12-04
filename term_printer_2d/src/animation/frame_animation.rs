@@ -1,6 +1,5 @@
-use super::super::*;
-use super::timer::Timer;
-use super::*;
+use super::{timer::Timer, Frame};
+use crate::Printer;
 use std::sync::{Arc, Mutex};
 
 pub enum AnimationTime {
@@ -38,7 +37,7 @@ impl FrameAnimation {
     pub fn start(mut self: Self, time: AnimationTime) -> Printer {
         let printer = Arc::clone(&self.printer);
         let returned_printer = Arc::clone(&self.printer);
-        let mut timer_mutex = Arc::clone(&self.timer);
+        let timer_mutex = Arc::clone(&self.timer);
 
         let mut timer = timer_mutex.lock().unwrap();
 

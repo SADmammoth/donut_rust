@@ -1,7 +1,9 @@
-use super::figures::*;
-use super::point::*;
-use super::print2d::*;
-use super::Canvas;
+use crate::{figures, print2d, Canvas, Point};
+use figures::Figure;
+use print2d::{
+    convert_figure_to_canvas_points, convert_to_canvas_points, format_matrix, get_print_matrix,
+    CanvasPoint,
+};
 use std::process::Command;
 
 #[derive(Debug)]

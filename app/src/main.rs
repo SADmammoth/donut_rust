@@ -1,9 +1,5 @@
 use std::{thread, time};
-use term_printer_2d::animation::*;
-use term_printer_2d::figures::*;
-use term_printer_2d::transformations::*;
-use term_printer_2d::Printer;
-use term_printer_2d::*;
+use term_printer_2d::{animation::*, Printer};
 
 fn main() {
     let mut printer = Printer::new();

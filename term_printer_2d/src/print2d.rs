@@ -1,6 +1,4 @@
-use super::figures::Figure;
-use super::Point;
-use super::Canvas;
+use crate::{figures::Figure, Canvas, Point};
 
 #[derive(Debug)]
 pub struct CanvasPoint {
@@ -44,12 +42,12 @@ pub fn convert_figure_to_canvas_points(
 
     for y in 0..steps_y {
         for x in 0..steps_x {
-          if let Some(point) = (*figure.point_mapper)(Point {
+            if let Some(point) = (*figure.point_mapper)(Point {
                 x: x as f32 * step_x,
                 y: y as f32 * step_y,
                 intensity: 0,
-            }){
-              points.push(point);
+            }) {
+                points.push(point);
             }
         }
     }
@@ -69,24 +67,19 @@ fn mul_usize_f32_ceil(a: &usize, b: &f32) -> usize {
     ((*a as f32) * b).ceil() as usize
 }
 
-
-pub fn get_print_matrix(
-    mut prev_matrix: Canvas,
-    canvas_points: &Vec<CanvasPoint>,
-) -> Canvas {
+pub fn get_print_matrix(mut prev_matrix: Canvas, canvas_points: &Vec<CanvasPoint>) -> Canvas {
     canvas_points.iter().for_each(|point| {
-      let mut y = point.y;
-      if y >= prev_matrix.len() {
-        y = prev_matrix.len() - 1;
-      }
-      let mut x = point.x;
-      if x >= prev_matrix[y].len() {
-        x = prev_matrix[y].len() - 1;
-      }
+        let mut y = point.y;
+        if y >= prev_matrix.len() {
+            y = prev_matrix.len() - 1;
+        }
+        let mut x = point.x;
+        if x >= prev_matrix[y].len() {
+            x = prev_matrix[y].len() - 1;
+        }
         if prev_matrix[y][x] != 0 {
-          let current_value = prev_matrix[y][x];
-            prev_matrix[y][x] =
-                (( current_value + point.intensity) as f32 / 2.0).round() as u8;
+            let current_value = prev_matrix[y][x];
+            prev_matrix[y][x] = ((current_value + point.intensity) as f32 / 2.0).round() as u8;
             return;
         }
         prev_matrix[y][x] = point.intensity;
