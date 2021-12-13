@@ -8,14 +8,14 @@ pub enum AnimationTime {
 }
 
 pub struct FrameAnimation {
-    frames: Vec<Frame>,
+    frames: Arc<Vec<Frame>>,
     timer: Arc<Mutex<Timer>>,
     current_frame_index: usize,
     printer: Arc<Mutex<Printer>>,
 }
 
 impl FrameAnimation {
-    pub fn new(frames: Vec<Frame>, printer: Arc<Mutex<Printer>>) -> FrameAnimation {
+    pub fn new(frames: Arc<Vec<Frame>>, printer: Arc<Mutex<Printer>>) -> FrameAnimation {
         FrameAnimation {
             frames,
             timer: Arc::new(Mutex::new(Timer::new())),
