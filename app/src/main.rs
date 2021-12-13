@@ -13,9 +13,15 @@ fn main() {
 
     while pos < 1.0 && angle < 360 {
       
-        let rectangle = rect(Point::new(0.33, 0.66, 0), Point::new(0.66, 0.33, 0), 3);
+        let mut rectangle = rect(Point::new(0.33, 0.66, 0), Point::new(0.66, 0.33, 0), 3);
+        rectangle = Transform::new(rectangle)
+                    .rotate(Angle { value: angle })
+                    .offset(Point { x: pos, y: pos, intensity: 0 })
+                    .scale(Scale { x: scale, y: scale})
+                    .apply();
+
         frames.push(Frame {
-            matrix: printer.get_figure_matrix(&affine_transform(rectangle, Angle { value: angle }, Point { x: pos, y: pos, intensity: 0 }, Point { x: scale, y: scale, intensity: 0 })),
+            matrix: printer.get_figure_matrix(&rectangle),
         });
         pos += 0.01;
         angle += 5;

@@ -2,7 +2,7 @@ use super::*;
 use crate::{figures::Figure, Point};
 use core::f32::consts::PI;
 
-pub fn affine_transform(fig: Figure, angle: Angle, offset: Point, scale: Point) -> Figure {
+pub fn affine_transform(fig: Figure, angle: Angle, offset: Point, scale: Scale) -> Figure {
     let mapper = fig.point_mapper;
     let origin = fig.origin.clone();
     Figure {
