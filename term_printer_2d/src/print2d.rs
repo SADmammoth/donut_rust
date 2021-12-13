@@ -35,7 +35,7 @@ pub fn convert_figure_to_canvas_points(
 ) -> Vec<CanvasPoint> {
     let steps_x = mul_usize_f32_ceil(&canvas_width, &figure.width);
     let step_x = 1f32 / steps_x as f32;
-    let steps_y = mul_usize_f32_floor(&canvas_height, &figure.height);
+    let steps_y = mul_usize_f32_ceil(&canvas_height, &figure.height);
     let step_y = 1f32 / steps_y as f32;
 
     let mut points = vec![];
