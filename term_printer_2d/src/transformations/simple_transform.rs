@@ -18,13 +18,13 @@ impl Transform {
     }
   }
 
-  pub fn rotate(self: &mut Self, angle: Angle) -> &mut Transform {
+  pub fn rotate(mut self: Self, angle: Angle) -> Transform {
     self.rotation = Angle { value: self.rotation.value + angle.value };
 
     self
   }
 
-  pub fn offset(self: &mut Self, offset: Point) -> &mut Transform {
+  pub fn offset(mut self: Self, offset: Point) -> Transform {
     self.offset = Point {
       x: self.offset.x + offset.x,
       y: self.offset.y + offset.y,
@@ -34,7 +34,7 @@ impl Transform {
     self
   }
 
-  pub fn scale(self: &mut Self, scale: Scale) -> &mut Transform {
+  pub fn scale(mut self: Self, scale: Scale) -> Transform {
     self.scale = Scale {
       x: self.scale.x * scale.x,
       y: self.scale.y * scale.y

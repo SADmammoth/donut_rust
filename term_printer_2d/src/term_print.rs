@@ -6,6 +6,8 @@ use print2d::{
 };
 use std::process::Command;
 
+pub const CHAR_ASPECT_RATIO: f32 = 0.4;
+
 #[derive(Debug)]
 pub struct Printer {
     mat: Canvas,
@@ -17,7 +19,7 @@ pub struct Printer {
 impl Printer {
     pub fn new() -> Printer {
         let (term_w, _) = term_size::dimensions_stdout().unwrap();
-        let (canvas_w, canvas_y) = (term_w, (term_w as f32 * 0.4).round() as usize);
+        let (canvas_w, canvas_y) = (term_w, (term_w as f32 * CHAR_ASPECT_RATIO).round() as usize);
 
         Printer {
             mat: vec![vec![0; canvas_w]; canvas_y],

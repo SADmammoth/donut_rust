@@ -1,8 +1,10 @@
 mod rect;
+mod line;
 use crate::Point;
 use std::ops::Fn;
 
 pub use rect::*;
+pub use line::*;
 
 pub type PointMapper = dyn Fn(Point) -> Option<Point>;
 
