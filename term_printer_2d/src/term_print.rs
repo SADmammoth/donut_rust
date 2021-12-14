@@ -5,6 +5,7 @@ use print2d::{
     CanvasPoint,
 };
 use std::process::Command;
+use crate::get_debug_string;
 
 pub const CHAR_ASPECT_RATIO: f32 = 0.4;
 
@@ -72,6 +73,7 @@ impl Printer {
             "{:}",
             self.canvas_to_string(&get_print_matrix(self.mat.clone(), &points))
         );
+        println!("{}", get_debug_string());
     }
 
     pub fn print_points(self: &mut Self, points: &Vec<Point>) {
@@ -93,6 +95,7 @@ impl Printer {
     pub fn print_matrix(self: &mut Self, matrix: &Canvas) {
         Self::clear_term();
         print!("{:}", self.canvas_to_string(matrix));
+        println!("{}", get_debug_string());
     }
 
     pub fn get_current_mat(self: &Self) -> Canvas {

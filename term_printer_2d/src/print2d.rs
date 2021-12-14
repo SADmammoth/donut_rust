@@ -33,13 +33,13 @@ pub fn convert_figure_to_canvas_points(
     canvas_width: usize,
     canvas_height: usize,
 ) -> Vec<CanvasPoint> {
-    let mut steps_x = mul_usize_f32_ceil(&canvas_width, &figure.width);
+    let mut steps_x = mul_usize_f32_ceil(&canvas_width, &figure.width());
     if steps_x <= 0 {
       steps_x = 1;
     }
 
     let step_x = 1f32 / steps_x as f32;
-    let mut steps_y = mul_usize_f32_ceil(&canvas_height, &figure.height);
+    let mut steps_y = mul_usize_f32_ceil(&canvas_height, &figure.height());
     if steps_y <= 0 {
       steps_y = 1;
     }
@@ -51,7 +51,7 @@ pub fn convert_figure_to_canvas_points(
 
     for y in 0..steps_y {
         for x in 0..steps_x {
-            if let Some(point) = (*figure.point_mapper)(Point {
+            if let Some(point) = figure.map(Point {
                 x: x as f32 * step_x,
                 y: y as f32 * step_y,
                 intensity: 0,

@@ -15,10 +15,10 @@ pub fn rect(left_top: Point, right_bottom: Point, intensity: u8) -> Figure {
     let y_mapper = move |y: f32| (height * y) + right_bottom.y;
 
     Figure {
-        width,
-        height,
-        origin,
-        point_mapper: Box::new(move |point| {
+        _width: width,
+        _height: height,
+        _origin: origin,
+        point_mapper: Box::new(move |_,_,_, point| {
             Some(Point {
                 x: x_mapper(point.x),
                 y: y_mapper(point.y),

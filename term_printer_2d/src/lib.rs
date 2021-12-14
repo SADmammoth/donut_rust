@@ -11,3 +11,6 @@ pub use term_print::{Printer};
 // use term_print::CHAR_ASPECT_RATIO;
 
 pub type Canvas = Vec<Vec<u8>>;
+
+mod debugger;
+use debugger::{get_debug_string, update_debug_string, append_debug_string};
