@@ -1,6 +1,6 @@
 use super::*;
 use crate::{
-    figures::{Figure, Path},
+    figures::{Figure, Path, Printable},
     Point,
 };
 use core::f32::consts::PI;

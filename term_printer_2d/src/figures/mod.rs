@@ -6,7 +6,12 @@ use std::ops::Fn;
 pub use rect::*;
 pub use line::*;
 
-
+pub trait Printable {
+  fn map(self: &Self, point: Point ) -> Option<Point>;
+  fn width(self: &Self) -> f32;
+  fn height(self: &Self) -> f32;
+  fn origin(self: &Self) -> Point;
+}
 
 pub type PointMapper<Target> = dyn Fn(&Target, f32, f32, Point) -> Option<Point>;
 
@@ -17,20 +22,20 @@ pub struct Figure {
     pub point_mapper: Box<PointMapper<Figure>>,
 }
 
-impl Figure {
-  pub fn map(self: &Self, point: Point ) -> Option<Point> {
+impl Printable for Figure {
+  fn map(self: &Self, point: Point ) -> Option<Point> {
     (*self.point_mapper)(self, self.width(), self.height(), point)
   }
 
-  pub fn width(self: &Self) -> f32 {
+  fn width(self: &Self) -> f32 {
     self._width
   }
 
-  pub fn height(self: &Self) -> f32 {
+  fn height(self: &Self) -> f32 {
     self._height
   }
   
-  pub fn origin(self: &Self) -> Point {
+  fn origin(self: &Self) -> Point {
    self._origin
   }
 }
@@ -48,21 +53,20 @@ pub struct Path {
     pub point_mapper: Box<PointMapper<Path>>,
 }
 
-impl Path {
-  pub fn map(self: &Self, point: Point ) -> Option<Point> {
+impl Printable for Path {
+  fn map(self: &Self, point: Point) -> Option<Point> {
     (*self.point_mapper)(self, self.width(), self.height(), point)
   }
 
-  pub fn width(self: &Self) -> f32 {
+  fn width(self: &Self) -> f32 {
     (*self.get_width)(self)
   }
 
-  pub fn height(self: &Self) -> f32 {
+  fn height(self: &Self) -> f32 {
     (*self.get_height)(self)
   }
   
-  pub fn origin(self: &Self) -> Point {
-    crate::append_debug_string(format!("{:?}", (*self.get_origin)(self, self.width(), self.height())));
+  fn origin(self: &Self) -> Point {
     (*self.get_origin)(self, self.width(), self.height())
   }
 }

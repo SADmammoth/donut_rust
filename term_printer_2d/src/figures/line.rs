@@ -1,5 +1,4 @@
 use super::Path;
-use super::PointMapper;
 use crate::Point;
 
 pub fn line(start: Point, end: Point, line_width: f32) -> Path {
@@ -7,10 +6,10 @@ pub fn line(start: Point, end: Point, line_width: f32) -> Path {
         panic!("Please, pass correct `line_width` param");
     }
 
-    let get_width = Box::new(move |figure: &Path| (figure.points[0].x - figure.points[0].x).abs());
+    let get_width = Box::new(move |figure: &Path| (figure.points[1].x - figure.points[0].x).abs());
     let get_height = Box::new(move |figure: &Path| (figure.points[1].y - figure.points[0].y).abs());
 
-    let get_origin = Box::new(move |figure: &Path, width: f32, height: f32| {
+    let get_origin = Box::new(move |_: &Path, width: f32, height: f32| {
         Point::new(
             if start.x < end.x {
                 (width / 2.0) + start.x
@@ -24,7 +23,7 @@ pub fn line(start: Point, end: Point, line_width: f32) -> Path {
             },
             0,
         )
-    }); //FIXME
+    });
 
     let x_mapper = move |x: f32, start: Point, end: Point, width: f32| {
         if start.x < end.x {
@@ -53,6 +52,7 @@ pub fn line(start: Point, end: Point, line_width: f32) -> Path {
             } else {
                 line_width * 0.015 * (height / width / 0.8)
             };
+            
             if (point.x - point.y).abs() >= line_dispersion {
                 None
             } else {

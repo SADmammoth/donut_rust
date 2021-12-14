@@ -1,4 +1,4 @@
-use crate::{figures::Figure, Canvas, Point};
+use crate::{figures::Printable, Canvas, Point};
 
 #[derive(Debug)]
 pub struct CanvasPoint {
@@ -29,7 +29,7 @@ pub fn convert_to_canvas_points(
 }
 
 pub fn convert_figure_to_canvas_points(
-    figure: &Figure,
+    figure: Box<dyn Printable>,
     canvas_width: usize,
     canvas_height: usize,
 ) -> Vec<CanvasPoint> {

@@ -1,5 +1,5 @@
 use crate::{figures, print2d, Canvas, Point};
-use figures::Figure;
+use figures::Printable;
 use print2d::{
     convert_figure_to_canvas_points, convert_to_canvas_points, format_matrix, get_print_matrix,
     CanvasPoint,
@@ -81,13 +81,13 @@ impl Printer {
         self.print(&canvas_points);
     }
 
-    pub fn print_figure(self: &mut Self, figure: &Figure) {
+    pub fn print_figure(self: &mut Self, figure: Box<dyn Printable>) {
         let canvas_points = convert_figure_to_canvas_points(figure, self.width, self.height);
 
         self.print(&canvas_points);
     }
 
-    pub fn get_figure_matrix(self: &Self, figure: &Figure) -> Canvas {
+    pub fn get_figure_matrix(self: &Self, figure: Box<dyn Printable>) -> Canvas {
         let canvas_points = convert_figure_to_canvas_points(figure, self.width, self.height);
         get_print_matrix(self.mat.clone(), &canvas_points)
     }
