@@ -13,7 +13,7 @@ impl Transform {
     Transform {
       figure,
       rotation: Angle { value: 0 },
-      offset: Point::new(0.0, 0.0, 0),
+      offset: Point::new(0.0, 0.0),
       scale: Scale {x: 1.0, y: 1.0},
     }
   }
@@ -25,11 +25,10 @@ impl Transform {
   }
 
   pub fn offset(mut self: Self, offset: Point) -> Transform {
-    self.offset = Point {
-      x: self.offset.x + offset.x,
-      y: self.offset.y + offset.y,
-      intensity: 0
-    };
+    self.offset = Point::new(
+      self.offset.get_x() + offset.get_x(),
+      self.offset.get_y() + offset.get_y(),
+    );
 
     self
   }

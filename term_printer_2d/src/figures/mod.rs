@@ -1,19 +1,19 @@
 mod rect;
 mod line;
-use crate::Point;
+use crate::{Point, Pixel};
 use std::ops::Fn;
 
 pub use rect::*;
 pub use line::*;
 
 pub trait Printable {
-  fn map(self: &Self, point: Point ) -> Option<Point>;
+  fn map(self: &Self, point: Point ) -> Option<Pixel>;
   fn width(self: &Self) -> f32;
   fn height(self: &Self) -> f32;
   fn origin(self: &Self) -> Point;
 }
 
-pub type PointMapper<Target> = dyn Fn(&Target, f32, f32, Point) -> Option<Point>;
+pub type PointMapper<Target> = dyn Fn(&Target, f32, f32, Point) -> Option<Pixel>;
 
 pub struct Figure {
     pub _width: f32,
@@ -23,7 +23,7 @@ pub struct Figure {
 }
 
 impl Printable for Figure {
-  fn map(self: &Self, point: Point ) -> Option<Point> {
+  fn map(self: &Self, point: Point ) -> Option<Pixel> {
     (*self.point_mapper)(self, self.width(), self.height(), point)
   }
 
@@ -54,7 +54,7 @@ pub struct Path {
 }
 
 impl Printable for Path {
-  fn map(self: &Self, point: Point) -> Option<Point> {
+  fn map(self: &Self, point: Point) -> Option<Pixel> {
     (*self.point_mapper)(self, self.width(), self.height(), point)
   }
 

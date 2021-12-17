@@ -1,9 +1,9 @@
-use std::{thread, time};
-use term_printer_2d::{animation::*, Printer, figures::line, Point, transformations::* };
-use std::sync::{Arc};
+// use std::{thread, time};
+use std::sync::Arc;
+use term_printer_2d::{animation::*, figures::line, transformations::*, Intensity, Point, Printer};
 
 fn main() {
-  let mut printer = Printer::new();
+    let mut printer = Printer::new();
 
     let mut pos = 0.0;
     let mut angle = 20;
@@ -12,14 +12,18 @@ fn main() {
     let mut frames: Vec<Frame> = vec![];
 
     while pos < 1.0 && angle < 360 {
-      
-        let mut rectangle = line(Point::new(0.5, 0.2, 4), Point::new(0.5, 0.8, 4), 20.0);
-        rectangle = affine_transform_path(rectangle, Angle {value: angle}, Point {
-          x: pos, y: pos, intensity: 0,
-        }, Scale {
-          x: scale, 
-          y: scale
-        });
+        let mut rectangle = line(
+            Point::new(0.5, 0.2),
+            Point::new(0.5, 0.8),
+            Intensity::new(4),
+            printer.relative(1),
+        );
+        rectangle = affine_transform_path(
+            rectangle,
+            Angle { value: angle },
+            Point::new(pos, pos),
+            Scale { x: scale, y: scale },
+        );
         frames.push(Frame {
             matrix: printer.get_figure_matrix(Box::new(rectangle)),
         });
@@ -40,11 +44,11 @@ fn main() {
     printer = animator
         .by_frame(Arc::clone(&frames), AnimationTime::Infinite)
         .return_printer();
-    
-// printer.wipe();
+
+    // printer.wipe();
     // thread::sleep(time::Duration::from_millis(1000));
 
     // let animator2 = Animator::new_with_printer_background(printer);
 
-    // animator2.by_frame(Arc::clone(&frames), AnimationTime::Milliseconds(10000));    // 
+    // animator2.by_frame(Arc::clone(&frames), AnimationTime::Milliseconds(10000));    //
 }

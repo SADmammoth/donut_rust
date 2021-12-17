@@ -1,4 +1,4 @@
-use crate::{figures, print2d, Canvas, Point};
+use crate::{figures, print2d, Canvas, Pixel};
 use figures::Printable;
 use print2d::{
     convert_figure_to_canvas_points, convert_to_canvas_points, format_matrix, get_print_matrix,
@@ -28,6 +28,13 @@ impl Printer {
             width: canvas_w,
             height: canvas_y,
         }
+    }
+
+    pub fn relative(self: &Self, canvas_points: usize) -> (f32, f32) {
+      let x_point = canvas_points as f32 / self.width as f32;
+      let y_point = canvas_points as f32 / self.height as f32;
+
+      (x_point, y_point)
     }
 
     pub fn wipe(self: &mut Self) {
@@ -76,7 +83,7 @@ impl Printer {
         println!("{}", get_debug_string());
     }
 
-    pub fn print_points(self: &mut Self, points: &Vec<Point>) {
+    pub fn print_points(self: &mut Self, points: &Vec<Pixel>) {
         let canvas_points = convert_to_canvas_points(points, self.width, self.height);
         self.print(&canvas_points);
     }

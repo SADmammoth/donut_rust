@@ -1,10 +1,10 @@
-use crate::{figures::Printable, Canvas, Point};
+use crate::{figures::Printable, Canvas, Intensity, Pixel, Point};
 
 #[derive(Debug)]
 pub struct CanvasPoint {
     pub x: usize,
     pub y: usize,
-    pub intensity: u8,
+    pub intensity: Intensity,
 }
 
 pub fn format_matrix(mat: Vec<Vec<char>>) -> String {
@@ -14,16 +14,16 @@ pub fn format_matrix(mat: Vec<Vec<char>>) -> String {
 }
 
 pub fn convert_to_canvas_points(
-    points: &Vec<Point>,
+    pixels: &Vec<Pixel>,
     canvas_width: usize,
     canvas_height: usize,
 ) -> Vec<CanvasPoint> {
-    points
+    pixels
         .iter()
-        .map(|point| CanvasPoint {
-            x: mul_usize_f32(&canvas_width, &point.x),
-            y: mul_usize_f32(&canvas_height, &point.y),
-            intensity: point.intensity,
+        .map(|pixel| CanvasPoint {
+            x: mul_usize_f32(&canvas_width, &pixel.get_x()),
+            y: mul_usize_f32(&canvas_height, &pixel.get_y()),
+            intensity: pixel.get_intensity(),
         })
         .collect()
 }
@@ -35,33 +35,28 @@ pub fn convert_figure_to_canvas_points(
 ) -> Vec<CanvasPoint> {
     let mut steps_x = mul_usize_f32_ceil(&canvas_width, &figure.width());
     if steps_x <= 0 {
-      steps_x = 1;
+        steps_x = 1;
     }
 
     let step_x = 1f32 / steps_x as f32;
     let mut steps_y = mul_usize_f32_ceil(&canvas_height, &figure.height());
     if steps_y <= 0 {
-      steps_y = 1;
+        steps_y = 1;
     }
 
     let step_y = 1f32 / steps_y as f32;
 
-
-    let mut points = vec![];
+    let mut pixels = vec![];
 
     for y in 0..steps_y {
         for x in 0..steps_x {
-            if let Some(point) = figure.map(Point {
-                x: x as f32 * step_x,
-                y: y as f32 * step_y,
-                intensity: 0,
-            }) {
-                points.push(point);
+            if let Some(pixel) = figure.map(Point::new(x as f32 * step_x, y as f32 * step_y)) {
+                pixels.push(pixel);
             }
         }
     }
 
-    convert_to_canvas_points(&points, canvas_width, canvas_height)
+    convert_to_canvas_points(&pixels, canvas_width, canvas_height)
 }
 
 fn mul_usize_f32(a: &usize, b: &f32) -> usize {
@@ -88,10 +83,11 @@ pub fn get_print_matrix(mut prev_matrix: Canvas, canvas_points: &Vec<CanvasPoint
         }
         if prev_matrix[y][x] != 0 {
             let current_value = prev_matrix[y][x];
-            prev_matrix[y][x] = ((current_value + point.intensity) as f32 / 2.0).round() as u8;
+            prev_matrix[y][x] =
+                ((current_value + point.intensity.get_value()) as f32 / 2.0).round() as u8;
             return;
         }
-        prev_matrix[y][x] = point.intensity;
+        prev_matrix[y][x] = point.intensity.get_value();
     });
 
     prev_matrix

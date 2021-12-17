@@ -1,43 +1,44 @@
 use super::Path;
-use crate::Point;
+use crate::{Intensity, Pixel, Point};
 
-pub fn line(start: Point, end: Point, line_width: f32) -> Path {
-    if line_width <= 0.0 {
+pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f32, f32)) -> Path {
+    if line_width.0 <= 0.0 || line_width.1 <= 0.0  {
         panic!("Please, pass correct `line_width` param");
     }
 
-    let get_width = Box::new(move |figure: &Path| (figure.points[1].x - figure.points[0].x).abs());
-    let get_height = Box::new(move |figure: &Path| (figure.points[1].y - figure.points[0].y).abs());
+    let get_width =
+        Box::new(move |figure: &Path| (figure.points[1].get_x() - figure.points[0].get_x()).abs());
+    let get_height =
+        Box::new(move |figure: &Path| (figure.points[1].get_y() - figure.points[0].get_y()).abs());
 
     let get_origin = Box::new(move |_: &Path, width: f32, height: f32| {
         Point::new(
-            if start.x < end.x {
-                (width / 2.0) + start.x
+            if start.get_x() < end.get_x() {
+                (width / 2.0) + start.get_x()
             } else {
-                (width / 2.0) + end.x
+                (width / 2.0) + end.get_x()
             },
-            if start.y < end.y {
-                (height / 2.0) + start.y
+            if start.get_y() < end.get_y() {
+                (height / 2.0) + start.get_y()
             } else {
-                (height / 2.0) + end.y
+                (height / 2.0) + end.get_y()
             },
-            0,
         )
     });
 
     let x_mapper = move |x: f32, start: Point, end: Point, width: f32| {
-        if start.x < end.x {
-            (width * x) + start.x
+        if start.get_x() < end.get_x() {
+            (width * x) + start.get_x()
         } else {
-            start.x - (width * x)
+            start.get_x() - (width * x)
         }
     };
 
     let y_mapper = move |y: f32, start: Point, end: Point, height: f32| {
-        if start.y < end.y {
-            (height * y) + start.y
+        if start.get_y() < end.get_y() {
+            (height * y) + start.get_y()
         } else {
-            start.y - (height * y)
+            start.get_y() - (height * y)
         }
     };
 
@@ -48,19 +49,19 @@ pub fn line(start: Point, end: Point, line_width: f32) -> Path {
         points: vec![start, end],
         point_mapper: Box::new(move |figure, width, height, point| {
             let line_dispersion = if width > height {
-                line_width * 0.015 * (width / height / 0.8)
+                width / height 
             } else {
-                line_width * 0.015 * (height / width / 0.8)
+                height / width
             };
-            
-            if (point.x - point.y).abs() >= line_dispersion {
+
+            if (point.get_x() - point.get_y()).abs() >= (line_width.0 - line_width.1).abs() * line_dispersion {
                 None
             } else {
-                Some(Point {
-                    x: x_mapper(point.x, figure.points[0], figure.points[1], width),
-                    y: y_mapper(point.y, figure.points[0], figure.points[1], height),
-                    intensity: start.intensity,
-                })
+                Some(Pixel::new(
+                    x_mapper(point.get_x(), figure.points[0], figure.points[1], width),
+                    y_mapper(point.get_y(), figure.points[0], figure.points[1], height),
+                    intensity,
+                ))
             }
         }),
     }
