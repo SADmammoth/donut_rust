@@ -7,7 +7,7 @@ use print2d::{
 use std::process::Command;
 use crate::get_debug_string;
 
-pub const CHAR_ASPECT_RATIO: f32 = 0.4;
+pub const CHAR_ASPECT_RATIO: f64 = 0.4;
 
 #[derive(Debug)]
 pub struct Printer {
@@ -20,7 +20,7 @@ pub struct Printer {
 impl Printer {
     pub fn new() -> Printer {
         let (term_w, _) = term_size::dimensions_stdout().unwrap();
-        let (canvas_w, canvas_y) = (term_w, (term_w as f32 * CHAR_ASPECT_RATIO).round() as usize);
+        let (canvas_w, canvas_y) = (term_w, (term_w as f64 * CHAR_ASPECT_RATIO).round() as usize);
 
         Printer {
             mat: vec![vec![0; canvas_w]; canvas_y],
@@ -30,9 +30,9 @@ impl Printer {
         }
     }
 
-    pub fn relative(self: &Self, canvas_points: usize) -> (f32, f32) {
-      let x_point = canvas_points as f32 / self.width as f32;
-      let y_point = canvas_points as f32 / self.height as f32;
+    pub fn relative(self: &Self, canvas_points: usize) -> (f64, f64) {
+      let x_point = canvas_points as f64 / self.width as f64;
+      let y_point = canvas_points as f64 / self.height as f64;
 
       (x_point, y_point)
     }

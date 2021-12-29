@@ -1,11 +1,11 @@
 #[derive(Debug, Clone, Copy)]
 pub struct Point {
-    x: f32,
-    y: f32,
+    x: f64,
+    y: f64,
 }
 
 impl Point {
-    pub fn new(x: f32, y: f32) -> Point {
+    pub fn new(x: f64, y: f64) -> Point {
         if (x > 1.0 || y > 1.0) || (x < 0.0 || y < 0.0) {
             panic!("Point coordinates must be between 1 and 0")
         }
@@ -20,11 +20,11 @@ impl Point {
         self.x > point.x
     }
 
-    pub fn get_x(self: &Self) -> f32 {
+    pub fn get_x(self: &Self) -> f64 {
         self.x
     }
 
-    pub fn get_y(self: &Self) -> f32 {
+    pub fn get_y(self: &Self) -> f64 {
         self.y
     }
 }

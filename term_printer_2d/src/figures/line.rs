@@ -1,7 +1,7 @@
 use super::Path;
 use crate::{Intensity, Pixel, Point};
 
-pub fn calculate_line_dispersion(width: f32, height: f32, line_width: (f32, f32)) -> (f32, f32){
+pub fn calculate_line_dispersion(width: f64, height: f64, line_width: (f64, f64)) -> (f64, f64){
   let width_res = width / line_width.0;
   let height_res = height / line_width.1;
 
@@ -16,7 +16,7 @@ pub fn calculate_line_dispersion(width: f32, height: f32, line_width: (f32, f32)
   }
 }
 
-pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f32, f32)) -> Path {
+pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f64, f64)) -> Path {
     if line_width.0 <= 0.0 || line_width.1 <= 0.0  {
         panic!("Please, pass correct `line_width` param");
     }
@@ -26,7 +26,7 @@ pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f32, f3
     let get_height =
         Box::new(move |figure: &Path| (figure.points[1].get_y() - figure.points[0].get_y()).abs());
 
-    let get_origin = Box::new(move |_: &Path, width: f32, height: f32| {
+    let get_origin = Box::new(move |_: &Path, width: f64, height: f64| {
         Point::new(
             if start.get_x() < end.get_x() {
                 (width / 2.0) + start.get_x()
@@ -41,7 +41,7 @@ pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f32, f3
         )
     });
 
-    let x_mapper = move |x: f32, start: Point, end: Point, width: f32| {
+    let x_mapper = move |x: f64, start: Point, end: Point, width: f64| {
         if start.get_x() < end.get_x() {
             (width * x) + start.get_x()
         } else {
@@ -49,7 +49,7 @@ pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f32, f3
         }
     };
 
-    let y_mapper = move |y: f32, start: Point, end: Point, height: f32| {
+    let y_mapper = move |y: f64, start: Point, end: Point, height: f64| {
         if start.get_y() < end.get_y() {
             (height * y) + start.get_y()
         } else {
@@ -64,7 +64,7 @@ pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f32, f3
         points: vec![start, end],
         point_mapper: Box::new(move |figure, width, height, point| {
             let line_dispersion = calculate_line_dispersion(width, height, line_width);
-            let x = point.get_x() * width / line_dispersion.0;
+            let x = (point.get_x() * width / line_dispersion.0).ceil();
            
             let new_x = x_mapper(point.get_x(), figure.points[0], figure.points[1], width);
             let new_y = y_mapper(point.get_y(), figure.points[0], figure.points[1], height);
@@ -77,11 +77,11 @@ pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f32, f3
                     intensity,
                 ))
             } else {
-              //  Some(Pixel::new(
-              //    new_x, new_y,
-              //       Intensity::new(1),
-              //   ))
-              None
+               Some(Pixel::new(
+                 new_x, new_y,
+                    Intensity::new(1),
+                ))
+              // None
             }
         }),
     }

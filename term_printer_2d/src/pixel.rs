@@ -30,18 +30,18 @@ pub struct Pixel {
 }
 
 impl Pixel {
-    pub fn new(x: f32, y: f32, intensity: Intensity) -> Pixel {
+    pub fn new(x: f64, y: f64, intensity: Intensity) -> Pixel {
         Pixel {
             point: Point::new(x, y),
             intensity,
         }
     }
 
-    pub fn get_x(self: &Self) -> f32 {
+    pub fn get_x(self: &Self) -> f64 {
         self.point.get_x()
     }
 
-    pub fn get_y(self: &Self) -> f32 {
+    pub fn get_y(self: &Self) -> f64 {
         self.point.get_y()
     }
 

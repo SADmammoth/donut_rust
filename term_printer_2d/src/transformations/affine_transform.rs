@@ -4,7 +4,7 @@ use crate::{
     Point,
     Pixel,
 };
-use core::f32::consts::PI;
+use core::f64::consts::PI;
 
 pub fn affine_transform(fig: Figure, angle: Angle, offset: Point, scale: Scale) -> Figure {
     let mapper = fig.point_mapper;
@@ -12,7 +12,7 @@ pub fn affine_transform(fig: Figure, angle: Angle, offset: Point, scale: Scale) 
         point_mapper: Box::new(move |figure, w, h, point| -> Option<Pixel> {
             let origin = figure.origin();
             let mapped_point = (*mapper)(figure, w, h, point).unwrap();
-            let radians = angle.value as f32 / 180.0 * PI;
+            let radians = angle.value as f64 / 180.0 * PI;
             let new_x = scale.x * mapped_point.get_x() * radians.cos()
                 - mapped_point.get_y() * radians.sin()
                 - origin.get_x() * (radians.cos() - 1.0)
@@ -40,7 +40,7 @@ pub fn affine_transform_path(fig: Path, angle: Angle, offset: Point, scale: Scal
         .points
         .iter()
         .map(|mapped_point| {
-            let radians = angle.value as f32 / 180.0 * PI;
+            let radians = angle.value as f64 / 180.0 * PI;
             let new_x = scale.x * mapped_point.get_x() * radians.cos()
                 - mapped_point.get_y() * radians.sin()
                 - origin.get_x() * (radians.cos() - 1.0)

@@ -10,9 +10,9 @@ pub fn rect(left_top: Point, right_bottom: Point, intensity: Intensity) -> Figur
     let height = left_top.get_y() - right_bottom.get_y();
 
     let origin = Point::new(left_top.get_x() + (width / 2.0), left_top.get_y() - (height / 2.0));
-    let x_mapper = move |x: f32| (width * x) + left_top.get_x();
+    let x_mapper = move |x: f64| (width * x) + left_top.get_x();
 
-    let y_mapper = move |y: f32| (height * y) + right_bottom.get_y();
+    let y_mapper = move |y: f64| (height * y) + right_bottom.get_y();
 
     Figure {
         _width: width,

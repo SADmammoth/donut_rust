@@ -7,6 +7,13 @@ use std::sync::{Arc, Mutex};
 
 pub use frame_animation::AnimationTime;
 
+pub enum FPS {
+  Fixed(u64),
+  Default
+}
+
+const DEFAULT_FPS_VALUE: u64 = 24;
+
 #[derive(Clone)]
 pub struct Frame {
     pub matrix: Canvas,
@@ -34,6 +41,7 @@ impl Animator {
 
     pub fn by_frame(
         mut self: Self, frames: Arc<Vec<Frame>>,
+        fps: FPS,
         animation_time: AnimationTime,
     ) -> Animator {
         let printer = self.printer;
@@ -41,7 +49,7 @@ impl Animator {
 
         let animation: FrameAnimation = FrameAnimation::new(frames, Arc::new(Mutex::new(printer)));
 
-        self.printer = animation.start(animation_time);
+        self.printer = animation.start(fps, animation_time);
 
         self
     }

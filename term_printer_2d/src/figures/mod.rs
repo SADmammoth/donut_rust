@@ -8,16 +8,16 @@ pub use line::*;
 
 pub trait Printable {
   fn map(self: &Self, point: Point ) -> Option<Pixel>;
-  fn width(self: &Self) -> f32;
-  fn height(self: &Self) -> f32;
+  fn width(self: &Self) -> f64;
+  fn height(self: &Self) -> f64;
   fn origin(self: &Self) -> Point;
 }
 
-pub type PointMapper<Target> = dyn Fn(&Target, f32, f32, Point) -> Option<Pixel>;
+pub type PointMapper<Target> = dyn Fn(&Target, f64, f64, Point) -> Option<Pixel>;
 
 pub struct Figure {
-    pub _width: f32,
-    pub _height: f32,
+    pub _width: f64,
+    pub _height: f64,
     pub _origin: Point,
     pub point_mapper: Box<PointMapper<Figure>>,
 }
@@ -27,11 +27,11 @@ impl Printable for Figure {
     (*self.point_mapper)(self, self.width(), self.height(), point)
   }
 
-  fn width(self: &Self) -> f32 {
+  fn width(self: &Self) -> f64 {
     self._width
   }
 
-  fn height(self: &Self) -> f32 {
+  fn height(self: &Self) -> f64 {
     self._height
   }
   
@@ -41,9 +41,9 @@ impl Printable for Figure {
 }
 
 
-pub type GetWidth =  dyn Fn(&Path) -> f32;
-pub type GetHeight =  dyn Fn(&Path) -> f32;
-pub type GetOrigin =  dyn Fn(&Path, f32, f32) -> Point;
+pub type GetWidth =  dyn Fn(&Path) -> f64;
+pub type GetHeight =  dyn Fn(&Path) -> f64;
+pub type GetOrigin =  dyn Fn(&Path, f64, f64) -> Point;
 
 pub struct Path {
     pub get_width: Box<GetWidth>,
@@ -58,11 +58,11 @@ impl Printable for Path {
     (*self.point_mapper)(self, self.width(), self.height(), point)
   }
 
-  fn width(self: &Self) -> f32 {
+  fn width(self: &Self) -> f64 {
     (*self.get_width)(self)
   }
 
-  fn height(self: &Self) -> f32 {
+  fn height(self: &Self) -> f64 {
     (*self.get_height)(self)
   }
   

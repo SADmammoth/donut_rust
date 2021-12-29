@@ -26,7 +26,7 @@ pub fn run() {
             matrix: printer.get_figure_matrix(Box::new(rectangle)),
         });
         // pos += 0.01;
-        angle += 5;
+        angle += 10;
         //     // if scale >= 2.0 && scale > 0.0
         //     // {
         //     //   scale -= 0.01
@@ -39,7 +39,7 @@ pub fn run() {
 
     let animator = Animator::new_with_printer_background(printer);
 
-    animator.by_frame(Arc::clone(&frames), AnimationTime::Infinite);
+    animator.by_frame(Arc::clone(&frames), FPS::Fixed(24), AnimationTime::Infinite);
 
     // printer.wipe();
     // thread::sleep(time::Duration::from_millis(1000));

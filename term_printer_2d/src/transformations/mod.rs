@@ -9,6 +9,6 @@ pub struct Angle {
 }
 
 pub struct Scale {
-  pub x: f32,
-  pub y: f32,
+  pub x: f64,
+  pub y: f64,
 }

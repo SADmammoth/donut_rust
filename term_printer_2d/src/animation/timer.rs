@@ -14,7 +14,7 @@ impl Timer {
         }
     }
 
-    pub fn start<F>(self: &mut Self, fun: F)
+    pub fn start<F>(self: &mut Self, delay: time::Duration, fun: F)
     where
         F: 'static + Send + FnMut() -> (),
     {
@@ -23,7 +23,6 @@ impl Timer {
         let alive = self.alive.clone();
 
         self.handle = Some(thread::spawn(move || {
-            let delay = time::Duration::from_millis(100);
             let mut fun = fun;
 
             while alive.load(Ordering::SeqCst) {
