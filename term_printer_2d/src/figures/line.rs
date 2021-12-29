@@ -2,10 +2,10 @@ use super::Path;
 use crate::{Intensity, Pixel, Point};
 
 pub fn calculate_line_dispersion(width: f32, height: f32, line_width: (f32, f32)) -> (f32, f32){
-  let width_res = (width / line_width.0).round();
-  let height_res = (height / line_width.1).round();
+  let width_res = width / line_width.0;
+  let height_res = height / line_width.1;
 
-  // crate::debugger::append_debug_string(format!("{:?}",line_width));
+  // crate::debugger::append_debug_string(format!("{:?}", height_res));
 
   if width_res < height_res {
     (line_width.0, (height_res / width_res) * line_width.1)
@@ -45,7 +45,7 @@ pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f32, f3
         if start.get_x() < end.get_x() {
             (width * x) + start.get_x()
         } else {
-            (width * x) + end.get_x()
+            start.get_x() - (width * x)
         }
     };
 
@@ -53,7 +53,7 @@ pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f32, f3
         if start.get_y() < end.get_y() {
             (height * y) + start.get_y()
         } else {
-            (height * y) + end.get_y()
+            start.get_y() - (height * y)
         }
     };
 
@@ -64,14 +64,14 @@ pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f32, f3
         points: vec![start, end],
         point_mapper: Box::new(move |figure, width, height, point| {
             let line_dispersion = calculate_line_dispersion(width, height, line_width);
-            let x = (point.get_x() * width / line_dispersion.0);
+            let x = point.get_x() * width / line_dispersion.0;
            
             let new_x = x_mapper(point.get_x(), figure.points[0], figure.points[1], width);
             let new_y = y_mapper(point.get_y(), figure.points[0], figure.points[1], height);
             
             if new_x > 1.0 || new_x < 0.0 || new_y > 1.0 || new_y < 0.0 {
               None
-            } else if point.get_y() >= ((x  - 1.0 )* line_dispersion.1 / height)  && point.get_y() < (x * line_dispersion.1 / height) {
+            } else if point.get_y() >= ((x - 1.0) * line_dispersion.1 / height)  && point.get_y() <= (x * line_dispersion.1 / height) {
                  Some(Pixel::new(
                  new_x,new_y,
                     intensity,
