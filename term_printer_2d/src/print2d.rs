@@ -50,7 +50,7 @@ pub fn convert_figure_to_canvas_points(
 
     for y in 0..steps_y {
         for x in 0..steps_x {
-            if let Some(pixel) = figure.map(Point::new(x as f64 * step_x, y as f64 * step_y)) {
+            if let Some(pixel) = figure.map(x, y, Point::new(x as f64 * step_x, y as f64 * step_y)) {
                 pixels.push(pixel);
             }
         }

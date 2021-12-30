@@ -11,8 +11,8 @@ pub fn run() {
 
     while pos < 1.0 && angle < 360 {
         let mut rectangle = line(
-            Point::new(0.5, 0.6),
-            Point::new(0.5, 0.3),
+            Point::new(0.0, 0.0),
+            Point::new(1.0, 1.0),
             Intensity::new(4),
             printer.relative(1),
         );
@@ -26,7 +26,7 @@ pub fn run() {
             matrix: printer.get_figure_matrix(Box::new(rectangle)),
         });
         // pos += 0.01;
-        angle += 10;
+        angle += 5;
         //     // if scale >= 2.0 && scale > 0.0
         //     // {
         //     //   scale -= 0.01
@@ -39,7 +39,7 @@ pub fn run() {
 
     let animator = Animator::new_with_printer_background(printer);
 
-    animator.by_frame(Arc::clone(&frames), FPS::Fixed(24), AnimationTime::Infinite);
+    animator.by_frame(Arc::clone(&frames), FPS::Fixed(70), AnimationTime::Infinite);
 
     // printer.wipe();
     // thread::sleep(time::Duration::from_millis(1000));

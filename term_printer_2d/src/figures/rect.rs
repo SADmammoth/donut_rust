@@ -18,7 +18,7 @@ pub fn rect(left_top: Point, right_bottom: Point, intensity: Intensity) -> Figur
         _width: width,
         _height: height,
         _origin: origin,
-        point_mapper: Box::new(move |_,_,_, point| {
+        point_mapper: Box::new(move |_,_,_, _, _, point| {
             Some(Pixel::new(
                 x_mapper(point.get_x()),
                 y_mapper(point.get_y()),

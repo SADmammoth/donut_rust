@@ -7,13 +7,13 @@ pub use rect::*;
 pub use line::*;
 
 pub trait Printable {
-  fn map(self: &Self, point: Point ) -> Option<Pixel>;
+  fn map(self: &Self, x_index: usize, y_index: usize, point: Point ) -> Option<Pixel>;
   fn width(self: &Self) -> f64;
   fn height(self: &Self) -> f64;
   fn origin(self: &Self) -> Point;
 }
 
-pub type PointMapper<Target> = dyn Fn(&Target, f64, f64, Point) -> Option<Pixel>;
+pub type PointMapper<Target> = dyn Fn(&Target, f64, f64, usize, usize, Point) -> Option<Pixel>;
 
 pub struct Figure {
     pub _width: f64,
@@ -23,8 +23,8 @@ pub struct Figure {
 }
 
 impl Printable for Figure {
-  fn map(self: &Self, point: Point ) -> Option<Pixel> {
-    (*self.point_mapper)(self, self.width(), self.height(), point)
+  fn map(self: &Self, x_index: usize, y_index: usize, point: Point ) -> Option<Pixel> {
+    (*self.point_mapper)(self, self.width(), self.height(), x_index, y_index, point)
   }
 
   fn width(self: &Self) -> f64 {
@@ -54,8 +54,8 @@ pub struct Path {
 }
 
 impl Printable for Path {
-  fn map(self: &Self, point: Point) -> Option<Pixel> {
-    (*self.point_mapper)(self, self.width(), self.height(), point)
+  fn map(self: &Self, x_index: usize, y_index: usize, point: Point) -> Option<Pixel> {
+    (*self.point_mapper)(self, self.width(), self.height(), x_index, y_index, point)
   }
 
   fn width(self: &Self) -> f64 {
