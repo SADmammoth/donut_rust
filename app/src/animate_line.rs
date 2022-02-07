@@ -1,5 +1,5 @@
 use std::sync::Arc;
-use term_printer_2d::{animation::*, figures::line, transformations::*, Intensity, Point, Printer};
+use term_printer_2d::{animation::*, figures::path, transformations::*, Intensity, Point, Printer};
 
 pub fn run() {
     let /*mut*/ printer = Printer::new();
@@ -10,9 +10,11 @@ pub fn run() {
     let mut frames: Vec<Frame> = vec![];
 
     while pos < 1.0 && angle < 360 {
-        let mut rectangle = line(
-            Point::new(0.0, 0.0),
-            Point::new(1.0, 1.0),
+        let mut rectangle = path(
+            vec!{Point::new(0.0, 0.0),
+                Point::new(1.0, 0.5),
+            Point::new(1.0, 1.0)
+        },
             Intensity::new(4),
             printer.relative(1),
         );
@@ -25,7 +27,7 @@ pub fn run() {
         frames.push(Frame {
             matrix: printer.get_figure_matrix(Box::new(rectangle)),
         });
-        // pos += 0.01;
+        // pos += 0.01;Q
         angle += 5;
         //     // if scale >= 2.0 && scale > 0.0
         //     // {
@@ -39,7 +41,7 @@ pub fn run() {
 
     let animator = Animator::new_with_printer_background(printer);
 
-    animator.by_frame(Arc::clone(&frames), FPS::Fixed(70), AnimationTime::Infinite);
+    animator.by_frame(Arc::clone(&frames), FPS::Fixed(60), AnimationTime::Infinite);
 
     // printer.wipe();
     // thread::sleep(time::Duration::from_millis(1000));

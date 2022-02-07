@@ -1,5 +1,5 @@
 use super::Path;
-use crate::{Intensity, Pixel, Point};
+use crate::{Intensity, Pixel, Point, debugger};
 
 pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f64, f64)) -> Path {
     if line_width.0 <= 0.0 || line_width.1 <= 0.0 {
@@ -7,9 +7,9 @@ pub fn line(start: Point, end: Point, intensity: Intensity, line_width: (f64, f6
     }
 
     let get_width =
-        Box::new(move |figure: &Path| (figure.points[1].get_x() - figure.points[0].get_x()).abs());
+        Box::new(move |figure: &Path| floor_to_1(figure.points[1].get_x() - figure.points[0].get_x()).abs());
     let get_height =
-        Box::new(move |figure: &Path| (figure.points[1].get_y() - figure.points[0].get_y()).abs());
+        Box::new(move |figure: &Path| floor_to_1(figure.points[1].get_y() - figure.points[0].get_y()).abs());
 
     let get_origin = Box::new(move |_: &Path, width: f64, height: f64| {
         Point::new(
@@ -100,4 +100,8 @@ pub fn is_point(
       point.get_y() > ((x_index as f64) * line_dispersion.1 / height)
       && point.get_y() <= ((x_index as f64 + 1.0) * line_dispersion.1 / height)
     }
+}
+
+pub fn floor_to_1(num:f64) -> f64 {
+    if num < 1.0 { 1.0 } else { num }
 }
