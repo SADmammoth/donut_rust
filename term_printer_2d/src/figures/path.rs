@@ -1,6 +1,7 @@
 use super::Printable;
 use super::line;
 use super::Path;
+use crate::append_debug_string;
 use crate::{Point, Intensity};
 
 
@@ -18,7 +19,8 @@ pub fn path(points: Vec<Point>, intensity: Intensity, line_width: (f64, f64)) ->
   let get_origin = Box::new(|figure: &Path, _: f64, _: f64| {
 	  let (min_x, max_x) = minmax(&figure.points, Box::new(|a, b| {a.get_x() < b.get_x()}));
 	  let (min_y, max_y) = minmax(&figure.points, Box::new(|a, b| {a.get_y() < b.get_y()}));
-	  return Point::new((max_x.get_x() - min_x.get_x()).abs() / 2.0, (max_y.get_y() - min_y.get_y()).abs() / 2.0);
+    append_debug_string(format!("{:?}", (max_y, min_y)));
+	  return Point::new((max_x.get_x() - min_x.get_x()) / 2.0 + min_x.get_x(), (max_y.get_y() - min_y.get_y()) / 2.0 + min_y.get_y());
   });
 
   Path {
@@ -27,12 +29,27 @@ pub fn path(points: Vec<Point>, intensity: Intensity, line_width: (f64, f64)) ->
 	  get_height,
     get_origin,
     point_mapper: Box::new(move |figure, width, height, x_index, y_index, point| {
+    //  let lines = get_lines(&figure.points, intensity, line_width);
+
+    //  for line in lines {
+
+    //   if let Some(line_point) = line.map(x_index, y_index, point) {
+    //     return Some(line_point);
+    //   }
+
+    //  }
+    //   return None;
       let relative_points = points_to_relative_points(&figure.points);
 
-      for line in lines.iter() {
-        if let Some(pixel) = line.map(x_index, y_index, point) {
-          return Some(pixel);
+      let mut line_index = 0;
+
+      while line_index < relative_points.len() - 1 {
+        if  is_line_point(&point, &relative_points[line_index], &relative_points[line_index+1]) {
+          if let Some(line_point) = line(figure.points[line_index], figure.points[line_index+1], intensity, line_width).map(x_index, y_index, point) {
+            return Some(line_point);
+          }
         }
+        line_index += 1;
       }
 
       return None;
@@ -83,6 +100,19 @@ fn points_to_relative_points(points: &Vec<Point>) -> Vec<Point> {
   }).collect()
 }
 
-fn is_line_point() {
-  
+fn is_line_point(point: &Point, line_start: &Point, line_end: &Point) -> bool {
+  let mut result = false;
+  if line_start.get_x() < line_end.get_x() {
+    result = line_start.get_x() <= point.get_x() && point.get_x() <= line_end.get_x();
+  } else {
+    result = line_end.get_x() <= point.get_x() && point.get_x() <= line_start.get_x();
+  }
+
+  if line_start.get_y() < line_end.get_y() {
+    result &= line_start.get_y() <= point.get_y() && point.get_y() <= line_end.get_y();
+  } else {
+    result &= line_end.get_y() <= point.get_y() && point.get_y() <= line_start.get_y();
+  }
+
+  result
 }

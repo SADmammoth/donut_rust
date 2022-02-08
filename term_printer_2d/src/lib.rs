@@ -16,4 +16,4 @@ pub type Canvas = Vec<Vec<u8>>;
 
 mod debugger;
 #[allow(unused_imports)]
-use debugger::{get_debug_string, update_debug_string, append_debug_string};
+pub use debugger::{get_debug_string, update_debug_string, append_debug_string};
