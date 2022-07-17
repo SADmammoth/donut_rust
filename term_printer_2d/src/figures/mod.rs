@@ -1,10 +1,12 @@
 mod rect;
 mod line;
+mod multipoint_line;
 use crate::{Point, Pixel};
 use std::ops::Fn;
 
 pub use rect::*;
 pub use line::*;
+pub use multipoint_line::*;
 
 pub trait Printable {
   fn map(self: &Self, x_index: usize, y_index: usize, point: Point ) -> Option<Pixel>;
